@@ -83,3 +83,28 @@ class RoutingNetwork:
             for node_name in updated_nodes:
                 self.nodes[node_name].print_routing_table()
 
+#MAIN
+
+# Create network
+network = RoutingNetwork()
+
+# Create nodes
+A = Node('A')
+B = Node('B')
+C = Node('C')
+D = Node('D')
+
+# Add nodes to network
+network.add_node(A)
+network.add_node(B)
+network.add_node(C)
+network.add_node(D)
+
+# Connect nodes with distances
+network.connect_nodes(A, B, 4)
+network.connect_nodes(A, C, 2)
+network.connect_nodes(B, D, 3)
+network.connect_nodes(C, D, 5)
+
+# Run routing simulation
+network.run_routing_protocol()
