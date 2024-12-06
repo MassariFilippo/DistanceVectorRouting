@@ -16,14 +16,13 @@ class Node:
         for neighbor_name, neighbor_info in self.neighbors.items():
             neighbor = neighbor_info['node']
             direct_link_dist = neighbor_info['distance']
-            # Process each destination in the neighbor's distance vector
             for dest, neighbor_dist in neighbor.distanceVector.items():
                 new_distance = direct_link_dist + neighbor_dist
-                # Add unknown destinations to the distance vector
+                # Aggiorno il DV con i nuovi nodi scoperti
                 if dest not in self.distanceVector:
                     self.distanceVector[dest] = new_distance
                     updated = True
-                # Update if the new distance is shorter
+                # Aggiono se la distanza è ridotta
                 elif new_distance < self.distanceVector[dest]:
                     self.distanceVector[dest] = new_distance
                     updated = True
