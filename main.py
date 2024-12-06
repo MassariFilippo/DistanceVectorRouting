@@ -1,10 +1,7 @@
-iterations = 5
-
 class Node:
     def __init__(self, name):
         self.name = name
-        self.distanceVector = {}
-        self.distanceVector[self.name] = 0
+        self.distanceVector = {self.name: 0}
         self.neighbors = {}
 
     def add_neighbor(self, neighbor, distance):
@@ -17,27 +14,25 @@ class Node:
     def update_distanceVector(self):
         updated = False
         for dest, current_dist in list(self.distanceVector.items()):
-            # Skip direct neighbors in initial routing
-            if dest == self.name:
-                continue
-            # Check routes through each neighbor
             for neighbor_name, neighbor_info in self.neighbors.items():
                 neighbor = neighbor_info['node']
                 direct_link_dist = neighbor_info['distance']
-                # Bellman-Ford equation: new_distance = direct_link + neighbor's known distance to destination
                 if dest in neighbor.distanceVector:
                     new_distance = direct_link_dist + neighbor.distanceVector[dest]
-                    # Update if new route is shorter
                     if dest not in self.distanceVector or new_distance < self.distanceVector[dest]:
                         self.distanceVector[dest] = new_distance
                         updated = True
         return updated
 
+    def send_distance_vector(self):
+        return self.distanceVector
+
     def print_distanceVector(self):
-        table = str(self.name)+": "
-        for neighbor in self.distanceVector.items():
-            table+=str(neighbor)
+        table = f"Node {self.name}: "
+        for dest, dist in self.distanceVector.items():
+            table += f"{dest}({dist}), "
         print(table)
+
 
 class RoutingNetwork:
     def __init__(self):
@@ -50,44 +45,60 @@ class RoutingNetwork:
         node1.add_neighbor(node2, distance)
         node2.add_neighbor(node1, distance)
 
-    def routing_protocol(self, iterations=5):       
-        print("--------------- Initial routing tables ---------------")
-        for node in self.nodes.values():
-            node.print_distanceVector()
-        # Routing updates
-        for i in range(iterations):
-            print("-------------------- Iteration" , i+1, "--------------------")
-            updated_nodes = []
-            # Collect nodes that updated their routing tables
+    def routing_protocol(self):
+        iteration = 0
+        while True:
+            iteration += 1
+            print(f"\nIterazione: {iteration}")
+
+            updates = {node.name: node.send_distance_vector() for node in self.nodes.values()}
+            any_updates = False
+
             for node in self.nodes.values():
-                if node.update_distanceVector():
-                    updated_nodes.append(node.name)
-            print("--------------- Update routing tables ---------------")
-            for node_name in updated_nodes:
-                self.nodes[node_name].print_distanceVector()
+                for neighbor_name, neighbor_info in node.neighbors.items():
+                    neighbor = neighbor_info['node']
+                    print(f"-------------------------- {node.name} riceve DV({neighbor_name}) ---------------------------")
+                    before_update = str(node.distanceVector)
+                    updated = node.update_distanceVector()
+                    after_update = str(node.distanceVector)
+                    print("------------------------------ Tabella ------------------------------")
+                    print(f"{node.name}: {before_update}")
+                    print("------------------------- Tabella aggiornata ------------------------")
+                    print(f"{node.name}: {after_update}")
+                    print("---------------------------------------------------------------------")
+                    if updated:
+                        any_updates = True
+            
+            print("\nTabelle di instradamento dopo l'iterazione:")
+            for node in self.nodes.values():
+                node.print_distanceVector()
 
-#MAIN
+            if not any_updates:
+                print("\nNessun aggiornamento necessario")
+                break
 
-# Create network
+# MAIN
+
+# Creazione del network
 network = RoutingNetwork()
 
-# Create nodes
+# Creazione dei nodi
 A = Node('A')
 B = Node('B')
 C = Node('C')
 D = Node('D')
 
-# Add nodes to network
+# Aggiunta dei nodi alla rete
 network.add_node(A)
 network.add_node(B)
 network.add_node(C)
 network.add_node(D)
 
-# Connect nodes with distances
-network.connect_nodes(A, B, 4)
+# Connessioni tra i nodi con le distanze
+network.connect_nodes(A, B, 2)
 network.connect_nodes(A, C, 2)
 network.connect_nodes(B, D, 3)
 network.connect_nodes(C, D, 5)
 
-# Run routing simulation
-network.routing_protocol(iterations)
+# Avvio del protocollo di routing
+network.routing_protocol()
