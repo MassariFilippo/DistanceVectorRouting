@@ -13,15 +13,20 @@ class Node:
 
     def update_distanceVector(self):
         updated = False
-        for dest, current_dist in list(self.distanceVector.items()):
-            for neighbor_name, neighbor_info in self.neighbors.items():
-                neighbor = neighbor_info['node']
-                direct_link_dist = neighbor_info['distance']
-                if dest in neighbor.distanceVector:
-                    new_distance = direct_link_dist + neighbor.distanceVector[dest]
-                    if dest not in self.distanceVector or new_distance < self.distanceVector[dest]:
-                        self.distanceVector[dest] = new_distance
-                        updated = True
+        for neighbor_name, neighbor_info in self.neighbors.items():
+            neighbor = neighbor_info['node']
+            direct_link_dist = neighbor_info['distance']
+            # Process each destination in the neighbor's distance vector
+            for dest, neighbor_dist in neighbor.distanceVector.items():
+                new_distance = direct_link_dist + neighbor_dist
+                # Add unknown destinations to the distance vector
+                if dest not in self.distanceVector:
+                    self.distanceVector[dest] = new_distance
+                    updated = True
+                # Update if the new distance is shorter
+                elif new_distance < self.distanceVector[dest]:
+                    self.distanceVector[dest] = new_distance
+                    updated = True
         return updated
 
     def send_distance_vector(self):
@@ -29,8 +34,8 @@ class Node:
 
     def print_distanceVector(self):
         table = f"Node {self.name}: "
-        for dest, dist in self.distanceVector.items():
-            table += f"{dest}({dist}), "
+        for dest in sorted(self.distanceVector.keys()):
+            table += f"{dest}({self.distanceVector[dest]}), "
         print(table)
 
 
@@ -48,17 +53,18 @@ class RoutingNetwork:
     def routing_protocol(self):
         iteration = 0
         while True:
-            iteration += 1
-            print(f"\nIterazione: {iteration}")
-
+            iteration += 1 
+            print(f"\n--------------------------- Iterazione: {iteration} ---------------------------")
+            # Ogni nodo invia il proprio DV attuale.
             updates = {node.name: node.send_distance_vector() for node in self.nodes.values()}
             any_updates = False
-
             for node in self.nodes.values():
+                # Per ogni nodo, itera sui suoi vicini.
                 for neighbor_name, neighbor_info in node.neighbors.items():
                     neighbor = neighbor_info['node']
                     print(f"-------------------------- {node.name} riceve DV({neighbor_name}) ---------------------------")
                     before_update = str(node.distanceVector)
+                    # Aggiorna il Distance Vector del nodo basandosi sul DV ricevuto dal vicino.
                     updated = node.update_distanceVector()
                     after_update = str(node.distanceVector)
                     print("------------------------------ Tabella ------------------------------")
@@ -68,15 +74,14 @@ class RoutingNetwork:
                     print("---------------------------------------------------------------------")
                     if updated:
                         any_updates = True
-            
-            print("\nTabelle di instradamento dopo l'iterazione:")
+            print("\nTabelle di instradamento dopo l'iterazione")
             for node in self.nodes.values():
                 node.print_distanceVector()
-
             if not any_updates:
-                print("\nNessun aggiornamento necessario")
+                print("\n")
                 break
 
+            
 # MAIN
 
 # Creazione del network
@@ -87,18 +92,28 @@ A = Node('A')
 B = Node('B')
 C = Node('C')
 D = Node('D')
+E = Node('E')
+F = Node('F')
 
 # Aggiunta dei nodi alla rete
 network.add_node(A)
 network.add_node(B)
 network.add_node(C)
 network.add_node(D)
+network.add_node(E)
+network.add_node(F)
 
 # Connessioni tra i nodi con le distanze
 network.connect_nodes(A, B, 2)
 network.connect_nodes(A, C, 2)
+network.connect_nodes(A, D, 9)
+network.connect_nodes(A, F, 5)
 network.connect_nodes(B, D, 3)
 network.connect_nodes(C, D, 5)
+network.connect_nodes(C, F, 11)
+network.connect_nodes(D, E, 3)
+network.connect_nodes(E, C, 1)
+network.connect_nodes(E, F, 7)
 
 # Avvio del protocollo di routing
 network.routing_protocol()
