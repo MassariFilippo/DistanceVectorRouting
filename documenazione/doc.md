@@ -66,7 +66,8 @@ Rappresenta l'intera rete di nodi e gestisce le connessioni e l'esecuzione del p
 ## Utilizzo
 
 ### Configurazione della Rete
-Per configurare opportunamente la rete è necessario modificare il main per ottenere la topografia desiderata, si può prendere come esempio:
+Per configurare opportunamente la rete è necessario modificare il main per ottenere la topografia desiderata, nel main fornito troviamo tre esempi di topografie ordinate per complessità cresciente, decommentando opportunamente il codice di una di esse e commentando quelle non desiderate si può osservare l'algorimo all'opera.
+Se si desidera configurare una propria topografia di rete si può prendere come esempio la topografia n. 2 qui riportata:
 
 ```python
 # Creazione di una rete
@@ -110,6 +111,8 @@ Durante l'esecuzione del protocollo, il programma fornisce print dettagliati, tr
 - Tabelle di routing finali dopo il raggiungimento della convergenza.
 
 ### Iterazione Campione:
+Possiamo di seguito osservare l'output ottenuto a terminale dalla topografia di rete n. 2
+
 ```
 --------------------------- Iterazione: 1 ---------------------------
 -------------------------- A riceve DV(B) ---------------------------

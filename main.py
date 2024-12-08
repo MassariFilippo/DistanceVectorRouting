@@ -86,6 +86,28 @@ class RoutingNetwork:
 # Creazione del network
 network = RoutingNetwork()
 
+#Topografia 1
+'''
+# Creazione dei nodi
+A = Node('A')
+B = Node('B')
+C = Node('C')
+
+# Aggiunta dei nodi alla rete
+network.add_node(A)
+network.add_node(B)
+network.add_node(C)
+
+# Connessioni tra i nodi con le distanze
+network.connect_nodes(A, B, 2)
+network.connect_nodes(A, C, 2)
+network.connect_nodes(A, D, 9)
+network.connect_nodes(A, F, 5)
+network.connect_nodes(B, D, 3)
+'''
+
+#Topografia 2
+
 # Creazione dei nodi
 A = Node('A')
 B = Node('B')
@@ -109,10 +131,53 @@ network.connect_nodes(A, D, 9)
 network.connect_nodes(A, F, 5)
 network.connect_nodes(B, D, 3)
 network.connect_nodes(C, D, 5)
-network.connect_nodes(C, F, 11)
 network.connect_nodes(D, E, 3)
 network.connect_nodes(E, C, 1)
-network.connect_nodes(E, F, 7)
+network.connect_nodes(E, F, 11)
+
+
+#Topografia 3
+'''
+# Creazione dei nodi
+A = Node('A')
+B = Node('B')
+C = Node('C')
+D = Node('D')
+E = Node('E')
+F = Node('F')
+G = Node('G')
+H = Node('H')
+I = Node('I')
+
+# Aggiunta dei nodi alla rete
+network.add_node(A)
+network.add_node(B)
+network.add_node(C)
+network.add_node(D)
+network.add_node(E)
+network.add_node(F)
+network.add_node(G)
+network.add_node(H)
+network.add_node(I)
+
+# Connessioni tra i nodi con le distanze
+network.connect_nodes(A, B, 2)
+network.connect_nodes(A, C, 2)
+network.connect_nodes(A, D, 9)
+network.connect_nodes(A, F, 5)
+network.connect_nodes(B, D, 3)
+network.connect_nodes(C, D, 5)
+network.connect_nodes(D, E, 3)
+network.connect_nodes(E, C, 1)
+network.connect_nodes(E, F, 11)
+network.connect_nodes(F, G, 3)
+network.connect_nodes(G, E, 4)
+network.connect_nodes(H, E, 10)
+network.connect_nodes(H, G, 2)
+network.connect_nodes(H, D, 2)
+network.connect_nodes(I, G, 5)
+network.connect_nodes(I, H, 4)
+'''
 
 # Avvio del protocollo di routing
 network.routing_protocol()
